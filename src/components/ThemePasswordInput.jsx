@@ -1,19 +1,10 @@
 import React, { forwardRef, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TextInputProps, StyleProp, ViewStyle, TouchableOpacity, TextStyle } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { TestIDs } from '@/constants/TestIDs';
+import PropTypes from 'prop-types';
 import { theme } from '@/constants/theme';
 
-interface IProps extends TextInputProps {
-  onChangeText: (text: string) => void;
-  containerStyle?: StyleProp<ViewStyle>;
-  inputStyle?: StyleProp<TextStyle>;
-  disabled?: boolean;
-  isValid?: boolean;
-  errorMessage?: string;
-}
-
-const ThemePasswordInput = forwardRef<TextInput, IProps>(
+const ThemePasswordInput = forwardRef(
   ({ value, onChangeText, placeholder, containerStyle, inputStyle, disabled, isValid = true, errorMessage, ...props }, ref) => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -21,10 +12,7 @@ const ThemePasswordInput = forwardRef<TextInput, IProps>(
 
     return (
       <View>
-        <View
-          style={[styles.container, containerStyle, !isValid && styles.containerError]}
-          testID={TestIDs.Components.ThemePasswordInput.Container}
-        >
+        <View style={[styles.container, containerStyle, !isValid && styles.containerError]}>
           {!value ? <Text style={styles.placeholder}>{placeholder}</Text> : null}
           <TextInput
             ref={ref}
@@ -33,9 +21,8 @@ const ThemePasswordInput = forwardRef<TextInput, IProps>(
             onChangeText={onChangeText}
             style={[styles.input, inputStyle]}
             {...props}
-            testID={TestIDs.Components.ThemePasswordInput.TextInput}
           />
-          <TouchableOpacity activeOpacity={0.6} onPress={handleEyePress} testID={TestIDs.Components.ThemePasswordInput.EyeBtn}>
+          <TouchableOpacity activeOpacity={0.6} onPress={handleEyePress}>
             <MaterialCommunityIcons name={`eye${isVisible ? '-off' : ''}`} size={24} color="black" style={styles.eye} />
           </TouchableOpacity>
         </View>
@@ -46,6 +33,17 @@ const ThemePasswordInput = forwardRef<TextInput, IProps>(
 );
 
 ThemePasswordInput.displayName = 'ThemePasswordInput';
+
+ThemePasswordInput.propTypes = {
+  value: PropTypes.string,
+  onChangeText: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+  containerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  inputStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  disabled: PropTypes.bool,
+  isValid: PropTypes.bool,
+  errorMessage: PropTypes.string,
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -1,22 +1,20 @@
 import React from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { TestIDs } from '@/constants/TestIDs';
+import PropTypes from 'prop-types';
 import { theme } from '@/constants/theme';
-import { useTypedTranslation } from '@/locales/useTypedTranslation';
 
-interface IProps {
-  onPress: () => void;
-}
-
-const HeaderBackButton = ({ onPress }: IProps) => {
-  const { t } = useTypedTranslation();
+const HeaderBackButton = ({ onPress }) => {
   return (
-    <TouchableOpacity activeOpacity={0.6} style={styles.container} onPress={onPress} testID={TestIDs.Components.HeaderBackButton.Container}>
+    <TouchableOpacity activeOpacity={0.6} style={styles.container} onPress={onPress}>
       <MaterialIcons name="arrow-back" size={24} color={theme.colors.icon.primary} />
-      <Text style={styles.text}>{t('common.back')}</Text>
+      <Text style={styles.text}>Back</Text>
     </TouchableOpacity>
   );
+};
+
+HeaderBackButton.propTypes = {
+  onPress: PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({

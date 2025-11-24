@@ -17,4 +17,4 @@ export const TestIDs = {
       Container: 'header_back_btn_container',
     },
   },
-} as const;
+};

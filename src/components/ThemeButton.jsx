@@ -1,24 +1,12 @@
 import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, StyleProp, TextStyle, ViewStyle, View } from 'react-native';
-import { TestIDs } from '@/constants/TestIDs';
+import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, View } from 'react-native';
+import PropTypes from 'prop-types';
 import { theme } from '@/constants/theme';
 
-type ButtonType = 'outline' | 'fill';
-
-interface IProps {
-  title: string;
-  onPress: () => void;
-  type?: ButtonType;
-  titleStyle?: StyleProp<TextStyle>;
-  containerStyle?: StyleProp<ViewStyle>;
-  disabled?: boolean;
-  loading?: boolean;
-}
-
-const ThemeButton = ({ title, onPress, type = 'fill', titleStyle, containerStyle, disabled = false, loading = false }: IProps) => {
+const ThemeButton = ({ title, onPress, type = 'fill', titleStyle, containerStyle, disabled = false, loading = false }) => {
   const isOutline = type === 'outline';
 
-  const getContainerStyle = (): ViewStyle => {
+  const getContainerStyle = () => {
     if (disabled) {
       return {
         backgroundColor: theme.colors.surface.disabled,
@@ -37,7 +25,7 @@ const ThemeButton = ({ title, onPress, type = 'fill', titleStyle, containerStyle
     };
   };
 
-  const getTitleStyle = (): TextStyle => {
+  const getTitleStyle = () => {
     if (disabled) {
       return {
         color: theme.colors.text.onDisabled,
@@ -51,7 +39,7 @@ const ThemeButton = ({ title, onPress, type = 'fill', titleStyle, containerStyle
   const renderContent = () => (
     <View style={styles.content}>
       {loading ? (
-        <ActivityIndicator color={theme.colors.white} testID={TestIDs.Components.ThemeButton.ActivityIndicator} />
+        <ActivityIndicator color={theme.colors.white} />
       ) : (
         <Text style={[styles.title, getTitleStyle(), titleStyle]}>{title}</Text>
       )}
@@ -64,11 +52,20 @@ const ThemeButton = ({ title, onPress, type = 'fill', titleStyle, containerStyle
       onPress={onPress}
       style={[styles.container, getContainerStyle(), containerStyle]}
       disabled={disabled || loading}
-      testID={TestIDs.Components.ThemeButton.Container}
     >
       {renderContent()}
     </TouchableOpacity>
   );
+};
+
+ThemeButton.propTypes = {
+  title: PropTypes.string.isRequired,
+  onPress: PropTypes.func.isRequired,
+  type: PropTypes.oneOf(['outline', 'fill']),
+  titleStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  containerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  disabled: PropTypes.bool,
+  loading: PropTypes.bool,
 };
 
 const styles = StyleSheet.create({

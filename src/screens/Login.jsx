@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback, TextInput } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { useLoginMutation } from '@/api/authApi';
-import { ScreenTitle, FindzzerTextField, FindzzerButton } from '@/components';
+import { ScreenTitle, ThemeInput, ThemePasswordInput, ThemeButton } from '@/components';
 import { images } from '@/config/Images';
 import NavigationScreens from '@/config/NavigationScreens';
 import { theme } from '@/constants/theme';
-import { useTypedTranslation } from '@/locales/useTypedTranslation';
-import { AuthStackNavigatorParamList } from '@/navigation/types';
 import { setSignedIn } from '@/store/commonSlices/userSlice';
 import { useAppDispatch } from '@/store/store';
 import { showErrorToast } from '@/utils';
 
-const Login = ({ navigation }: NativeStackScreenProps<AuthStackNavigatorParamList, NavigationScreens.Login>) => {
-  const { t } = useTypedTranslation();
+const Login = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const [login, { isLoading }] = useLoginMutation();
@@ -22,31 +18,26 @@ const Login = ({ navigation }: NativeStackScreenProps<AuthStackNavigatorParamLis
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const [emailError, setEmailError] = useState('');
-  const [emailTouched, setEmailTouched] = useState(false);
-
-  const handleChangePassword = (text: string) => {
-    setPassword(text);
-  };
-
   const handleLoginPress = async () => {
     try {
-      const response = await login({ email: 'test@test.com', password: '123456789' }).unwrap();
+      const response = await login({ email: email, password: password }).unwrap();
 
       // Save tokens
       await SecureStore.setItemAsync('access_token', response.token);
       await SecureStore.setItemAsync('refresh_token', response.token);
 
       dispatch(setSignedIn(true));
-    } catch (err: unknown) {
+    } catch (err) {
       let errorMsg = 'Login failed';
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (typeof err === 'object' && err !== null && 'data' in err && typeof (err as any).data?.error_description === 'string') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        errorMsg = (err as any).data.error_description;
+      if (typeof err === 'object' && err !== null && 'data' in err && typeof err.data?.error_description === 'string') {
+        errorMsg = err.data.error_description;
       }
       showErrorToast(errorMsg);
     }
+  };
+
+  const handleSignupPress = () => {
+    navigation.navigate(NavigationScreens.Signup);
   };
 
   return (
@@ -56,24 +47,20 @@ const Login = ({ navigation }: NativeStackScreenProps<AuthStackNavigatorParamLis
           <View>
             <View style={styles.logoContent}>
               <Image source={images.loginLogo} />
-              <ScreenTitle title={t('login.title')} containerStyle={styles.title} />
+              <ScreenTitle title="Welcome Back" containerStyle={styles.title} />
             </View>
             <View style={styles.formContainer}>
               <View style={styles.inputContainer}>
-                <FindzzerTextField label={t('login.emailPlaceholder')} onChangeText={setEmail} value={email}></FindzzerTextField>
-                <FindzzerTextField
-                  label={t('login.passwordPlaceholder')}
-                  check="password"
-                  onChangeText={handleChangePassword}
-                  value={password}
-                ></FindzzerTextField>
+                <ThemeInput placeholder="Email" onChangeText={setEmail} value={email} autoCapitalize="none" keyboardType="email-address" />
+                <ThemePasswordInput placeholder="Password" onChangeText={setPassword} value={password} />
                 <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
-                  <Text style={styles.forgotPass}>{t('login.forgotPass')}</Text>
+                  <Text style={styles.forgotPass}>Forgot Password?</Text>
                 </TouchableOpacity>
               </View>
-              <FindzzerButton onPress={handleLoginPress} loading={isLoading}>
-                {t('login.login')}
-              </FindzzerButton>
+              <ThemeButton title="Log In" onPress={handleLoginPress} loading={isLoading} />
+              <TouchableOpacity onPress={handleSignupPress} style={styles.signupContainer}>
+                <Text style={styles.signupText}>Don't have an account? Sign Up</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -104,6 +91,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     gap: theme.spacing.sm,
+    marginBottom: theme.spacing.lg,
   },
   forgotPass: {
     color: theme.colors.text.secondary,
@@ -111,6 +99,14 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.label.md,
     textDecorationLine: 'underline',
     alignSelf: 'flex-end',
+  },
+  signupContainer: {
+    marginTop: theme.spacing.md,
+    alignItems: 'center',
+  },
+  signupText: {
+    color: theme.colors.text.secondary,
+    fontSize: theme.typography.fontSize.paragraph.md,
   },
 });
 

@@ -1,34 +1,15 @@
 import React, { forwardRef } from 'react';
-import { View, Text, TextInput, StyleSheet, TextInputProps, StyleProp, ViewStyle, TextStyle } from 'react-native';
-import { TestIDs } from '@/constants/TestIDs';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 import { theme } from '@/constants/theme';
 
-interface IProps extends TextInputProps {
-  onChangeText: (text: string) => void;
-  containerStyle?: StyleProp<ViewStyle>;
-  inputStyle?: StyleProp<TextStyle>;
-  placeholderStyle?: StyleProp<TextStyle>;
-  isValid?: boolean;
-  errorMessage?: string;
-}
-
-const ThemeInput = forwardRef<TextInput, IProps>(
+const ThemeInput = forwardRef(
   ({ value, placeholder, onChangeText, containerStyle, inputStyle, placeholderStyle, isValid = true, errorMessage, ...props }, ref) => {
     return (
       <View>
-        <View
-          style={[styles.container, containerStyle, !isValid && styles.containerError]}
-          testID={TestIDs.Components.ThemeInput.Container}
-        >
+        <View style={[styles.container, containerStyle, !isValid && styles.containerError]}>
           {!value ? <Text style={[styles.placeholder, placeholderStyle]}>{placeholder}</Text> : null}
-          <TextInput
-            ref={ref}
-            value={value}
-            onChangeText={onChangeText}
-            style={[styles.input, inputStyle]}
-            {...props}
-            testID={TestIDs.Components.ThemeInput.TextInput}
-          />
+          <TextInput ref={ref} value={value} onChangeText={onChangeText} style={[styles.input, inputStyle]} {...props} />
         </View>
         {errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
       </View>
@@ -37,6 +18,17 @@ const ThemeInput = forwardRef<TextInput, IProps>(
 );
 
 ThemeInput.displayName = 'ThemeInput';
+
+ThemeInput.propTypes = {
+  value: PropTypes.string,
+  placeholder: PropTypes.string,
+  onChangeText: PropTypes.func.isRequired,
+  containerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  inputStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  placeholderStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  isValid: PropTypes.bool,
+  errorMessage: PropTypes.string,
+};
 
 const styles = StyleSheet.create({
   container: {
