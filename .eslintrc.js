@@ -1,15 +1,12 @@
 // https://docs.expo.dev/guides/using-eslint/
 module.exports = {
-  extends: ['expo', 'prettier', 'plugin:import/recommended', 'plugin:import/typescript', 'plugin:@typescript-eslint/recommended'],
-  plugins: ['prettier', 'import', '@typescript-eslint', 'react-native'],
-  parser: '@typescript-eslint/parser',
+  extends: ['expo', 'prettier', 'plugin:import/recommended'],
+  plugins: ['prettier', 'import', 'react-native'],
   rules: {
     'prettier/prettier': 'error',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'error',
     'react-native/no-unused-styles': 'error',
-    '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/no-require-imports': 0,
     'import/no-named-as-default': 0,
     'react/function-component-definition': [
       2,
@@ -18,8 +15,7 @@ module.exports = {
         unnamedComponents: 'arrow-function',
       },
     ],
-    '@typescript-eslint/no-unused-vars': 'error',
-    'no-console': 'error',
+    'no-console': 'warn', // Changed to 'warn' so you can still see logs
 
     'import/order': [
       'error',
@@ -49,12 +45,8 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
-      typescript: {
-        alwaysTryTypes: true,
-        project: './tsconfig.json',
-      },
       node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        extensions: ['.js', '.jsx'],
       },
     },
   },
