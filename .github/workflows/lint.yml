@@ -1,0 +1,33 @@
+name: Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint-and-ts:
+    name: Lint & TypeScript Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run TypeScript check
+        run: yarn tsc --noEmit
+
+      - name: Run ESLint
+        run: yarn lint
